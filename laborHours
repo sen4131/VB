@@ -1,0 +1,199 @@
+Sub FormatCalendar()
+'
+' FormatCalendar Macro
+' format the ouput from calendar
+
+    Workbook("test.xlsx").Sheets(1).Activate
+    
+' format the colums
+    Columns("A:L").Select
+    Columns("A:L").EntireColumn.AutoFit
+    Rows("1:1").Select
+    Selection.Delete Shift:=xlUp
+    Range("D1").Select
+    Selection.Cut
+    Range("C1").Select
+    ActiveSheet.Paste
+    Range("G1").Select
+    Selection.Cut
+    Range("H1").Select
+    ActiveSheet.Paste
+    Range("J1").Select
+    Selection.Cut
+    Range("L1").Select
+    ActiveSheet.Paste
+    Range("I1").Select
+    Selection.Cut
+    Range("J1").Select
+    ActiveSheet.Paste
+    Columns("D:D").Select
+    Selection.Delete Shift:=xlToLeft
+    Columns("F:F").Select
+    Selection.Delete Shift:=xlToLeft
+    Columns("G:G").Select
+    Selection.Delete Shift:=xlToLeft
+    ActiveWindow.SmallScroll Down:=-15
+    Range("D1").Select
+    Selection.Cut
+    Range("E1").Select
+    ActiveSheet.Paste
+    Range("D1").Select
+    ActiveCell.FormulaR1C1 = "Org type"
+    Columns("H:H").Select
+    Selection.Delete Shift:=xlToLeft
+    Range("F2:G2").Select
+    
+    'last row
+    With ActiveSheet
+        LastRow = .Cells(.Rows.Count, "B").End(xlUp).Row
+    End With
+    i = 1
+    For i = 1 To LastRow
+        If (Cells(i, 1) = "") Then
+            Cells(i, 1) = Cells((i - 1), 1)
+        End If
+    Next
+
+        
+    
+    'remove duplicates
+    
+    Range("A1").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    ActiveSheet.Range("$A$1:$H$100").RemoveDuplicates Columns:=Array(6, 7), Header _
+        :=xlYes
+    
+    'arrange
+    
+    ThisWorkbook.ActiveSheet.Sort.SortFields.Clear
+    ThisWorkbook.ActiveSheet.Sort.SortFields.Add Key:=Range("F2:F126") _
+        , SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    ThisWorkbook.ActiveSheet.Sort.SortFields.Add Key:=Range("B2:B126") _
+        , SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ThisWorkbook.ActiveSheet.Sort
+        .SetRange Range("A1:H126")
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWindow.SmallScroll Down:=-12
+    
+End Sub
+
+Sub formating()
+'
+' formating Macro
+
+'   open test Workbook
+    Workbooks("test.xlsx").Sheets(1).Activate
+    
+    Columns("A:A").Select
+    Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    Range("A1").Select
+    Selection.End(xlToRight).Select
+    Selection.Copy
+    Range("C1").Select
+    Selection.End(xlDown).Select
+    Selection.End(xlDown).Select
+    Selection.End(xlToLeft).Select
+    Range(Selection, Selection.End(xlUp)).Select
+    ActiveSheet.Paste
+    ActiveWindow.SmallScroll Down:=-54
+    Rows("1:1").Select
+    Application.CutCopyMode = False
+    Selection.Delete Shift:=xlUp
+    Range("B1:K1").Select
+    Selection.Cut
+    Range("C1").Select
+    ActiveSheet.Paste
+    Range("A1").Select
+    ActiveCell.FormulaR1C1 = "Day"
+    Range("B1").Select
+    ActiveCell.FormulaR1C1 = "Setup"
+    Range("C1").Select
+    Selection.End(xlToRight).Select
+    Range("L1").Select
+    Selection.Cut
+    Range("M1").Select
+    ActiveSheet.Paste
+    Columns("A:M").Select
+    Columns("A:M").EntireColumn.AutoFit
+    Columns("E:E").Select
+    Selection.Delete Shift:=xlToLeft
+    Columns("G:G").Select
+    Selection.Delete Shift:=xlToLeft
+    Columns("H:H").Select
+    Selection.Delete Shift:=xlToLeft
+    Range("I1").Select
+    ActiveCell.FormulaR1C1 = "Priority"
+    Range("J1").Select
+
+End Sub
+Sub removeNotSetupB()
+' Removes all venues that dont require setup
+
+    'last row
+    Workbooks("test.xlsx").Sheets(1).Activate
+    
+    With ActiveSheet
+        LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+    End With
+    
+    'del step
+    For i = LastRow To 2 Step -1
+        If (Cells(i, 2).Value <> "SETUP") Then
+            Cells(i, 2).EntireRow.Delete
+        End If
+    Next i
+
+End Sub
+Sub moveOver()
+    'columns in calendar
+    Workbooks("test.xlsx").Sheets(1).Activate
+    With ActiveSheet
+        LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+        Cday = WorksheetFunction.Match("Day", Sheets(1).Range("1:1"), 0)
+    End With
+    
+    'columns in man hours
+    Workbooks("MAN HOURS 6.14-11.16.xlsx").Sheets(1).Activate
+    With ActiveSheet
+    
+        LastRow2 = .Cells(.Rows.Count, "A").End(xlUp).Row
+        Day1 = WorksheetFunction.Match("Date", Sheets(1).Range("3:3"), 0)
+        Dept = WorksheetFunction.Match("Department", Sheets(1).Range("3:3"), 0)
+        OrgType = WorksheetFunction.Match("Org Type", Sheets(1).Range("3:3"), 0)
+        EventName = WorksheetFunction.Match("Event Name", Sheets(1).Range("3:3"), 0)
+        Location = WorksheetFunction.Match("Location", Sheets(1).Range("3:3"), 0)
+        Pass = WorksheetFunction.Match("Pass #", Sheets(1).Range("3:3"), 0)
+        Num = WorksheetFunction.Match("# of Attendees", Sheets(1).Range("3:3"), 0)
+        Setup = WorksheetFunction.Match("Set-Up Time Available", Sheets(1).Range("3:3"), 0)
+        EventStart = WorksheetFunction.Match("Start Time of Event", Sheets(1).Range("3:3"), 0)
+        EventEnd = WorksheetFunction.Match("Event End Time", Sheets(1).Range("3:3"), 0)
+        Dur = WorksheetFunction.Match("Duration of Event", Sheets(1).Range("3:3"), 0)
+           
+    End With
+       
+    'copying across
+    Workbooks("test.xlsx").Sheets(1).Activate
+    Workbooks("test.xlsx").Sheets(1).Range(Cells(2, Cday), Cells(LastRow, Cday)).Copy
+    
+    Workbooks("MAN HOURS 6.14-11.16.xlsx").Sheets(1).Activate
+    Workbooks("MAN HOURS 6.14-11.16.xlsx").Sheets(1).Cells(LastRow2 + 1, Day1).Select
+    ActiveSheet.Paste
+    
+    
+    
+    Workbooks("test.xlsx").Sheets(1).Activate
+    
+    Workbooks("MAN HOURS 6.14-11.16.xlsx").Sheets(1).Activate
+    
+End Sub
+Sub test()
+    Workbooks("test.xlsx").Sheets(1).Activate
+    ActiveSheet.Range("A1:A2").Select
+    selection.
+End Sub
